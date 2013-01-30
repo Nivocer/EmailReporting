@@ -39,7 +39,7 @@ class ERP_Mail_Parser
 			$this->_memory_limit = ini_get( 'memory_limit' );
 		}
 	}
-	
+
 	private function prepare_mb_list_encodings()
 	{
 		if ( extension_loaded( 'mbstring' ) )
@@ -196,7 +196,7 @@ class ERP_Mail_Parser
 	{
 		$this->_transferencoding = $transferencoding;
 	}
-	
+
 	private function setContentType( $primary, $secondary )
 	{
 		$this->_ctype['primary'] = $primary;
@@ -232,6 +232,9 @@ class ERP_Mail_Parser
 			$p_attached_email_subject = $parts[ $i ]->headers[ 'subject' ];
 		}
 
+		$parts[ $i ]->ctype_primary = strtolower($parts[ $i ]->ctype_primary);
+		$parts[ $i ]->ctype_secondary = strtolower($parts[ $i ]->ctype_secondary);
+
 		if ( 'text' === $parts[ $i ]->ctype_primary && in_array( $parts[ $i ]->ctype_secondary, array( 'plain', 'html' ) ) )
 		{
 			$t_stop_part = FALSE;
@@ -241,7 +244,7 @@ class ERP_Mail_Parser
 			if (
 				count( $parts ) === 2 && !isset( $parts[ $i ]->parts ) && !isset( $parts[ $i+1 ]->parts ) &&
 				'text' === $parts[ $i+1 ]->ctype_primary &&
-				in_array( $parts[ $i+1 ]->ctype_secondary, array( 'plain', 'html' ) ) && 
+				in_array( $parts[ $i+1 ]->ctype_secondary, array( 'plain', 'html' ) ) &&
 				$parts[ $i ]->ctype_secondary !== $parts[ $i+1 ]->ctype_secondary
 			)
 			{
@@ -284,6 +287,9 @@ class ERP_Mail_Parser
 
 		for ( $i; $i < count( $parts ); $i++ )
 		{
+		    $parts[ $i ]->ctype_primary = strtolower($parts[ $i ]->ctype_primary);
+		    $parts[ $i ]->ctype_secondary = strtolower($parts[ $i ]->ctype_secondary);
+
 			if ( 'multipart' == $parts[ $i ]->ctype_primary )
 			{
 				$this->setParts( $parts[ $i ]->parts, $attachment, $p_attached_email_subject );
@@ -298,7 +304,7 @@ class ERP_Mail_Parser
 			}
 		}
 	}
-	
+
 	private function addPart( &$part, $p_alternative_name = NULL )
 	{
 		if ( $this->_add_attachments )
